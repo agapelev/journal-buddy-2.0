@@ -1,15 +1,23 @@
 // Copyright 2026 - Бортовой журнал Льва: Хроники Технологий и ИИ
 import { Injectable, signal, effect } from "@angular/core"
+import { HttpClient } from "@angular/common/http";
 
 export interface JournalEntry {
     date: string;
     entry: string;
 }
 
+interface StoredEntries {
+    dev_log: JournalEntry[];
+    ai_insights: JournalEntry[];
+    lastUpdated?: string;
+}
+
 @Injectable({providedIn: "root"})
 export class JournalEntries {
     private readonly STORAGE_KEY_DEV = 'journal_dev_log';
     private readonly STORAGE_KEY_AI = 'journal_ai_insights';
+    private currentApiKey: string = '';
 
     // Дефолтные записи
     private readonly DEFAULT_DEV_LOG: JournalEntry[] = [
@@ -42,38 +50,158 @@ export class JournalEntries {
         }
     ];
 
-    /**
-     * Используем сигналы (Signals) для реактивного обновления списка.
-     * Это позволяет интерфейсу мгновенно перерисовываться при добавлении новой записи.
-     */
     private dev_log_signal = signal<JournalEntry[]>([]);
     private ai_insights_signal = signal<JournalEntry[]>([]);
     private isInitialized = false;
+    private isLoading = signal(false);
+    private isSaving = signal(false);
 
-    constructor() {
-        // Загружаем из localStorage ИЛИ используем дефолтные значения
-        this.initializeFromStorage();
+    constructor(private http: HttpClient) {
+        // Загружаем из локального storage при инициализации (fallback)
+        this.loadFromLocalStorage();
+        this.isInitialized = true;
         
-        // 💾 Автоматически сохраняем в LocalStorage при изменении (только после инициализации)
+        // 💾 Автоматически сохраняем на сервер при изменении сигналов
         effect(() => {
-            if (!this.isInitialized) return; // Не сохраняем до инициализации
+            if (!this.isInitialized || !this.currentApiKey) return;
             
             const devEntries = this.dev_log_signal();
-            console.log('💾 Сохраняю Dev Log:', devEntries.length, 'записей');
-            localStorage.setItem(this.STORAGE_KEY_DEV, JSON.stringify(devEntries));
+            console.log('💾 Синхро Dev Log на сервер');
+            this.saveToServer();
         });
 
         effect(() => {
-            if (!this.isInitialized) return; // Не сохраняем до инициализации
+            if (!this.isInitialized || !this.currentApiKey) return;
             
             const aiEntries = this.ai_insights_signal();
-            console.log('💾 Сохраняю AI Insights:', aiEntries.length, 'записей');
-            localStorage.setItem(this.STORAGE_KEY_AI, JSON.stringify(aiEntries));
+            console.log('💾 Синхро AI Insights на сервер');
+            this.saveToServer();
         });
     }
 
     /**
-     * Инициализируем данные из LocalStorage или дефолтные значения
+     * Инициализируем данные с сервера когда задан API key
+     */
+    async initializeWithApiKey(apiKey: string) {
+        this.currentApiKey = apiKey;
+        console.log('🔑 Инициализирую со следующим API key');
+        await this.loadFromServer();
+    }
+
+    /**
+     * Загружаем данные с сервера по API
+     */
+    private async loadFromServer() {
+        if (!this.currentApiKey) {
+            console.log('ℹ️ API key не задан, пропускаю загрузку с сервера');
+            return;
+        }
+
+        try {
+            this.isLoading.set(true);
+            console.log('📡 Загружаю записи с сервера...');
+            
+            const response = await this.http.get<StoredEntries>('/api/entries/load', {
+                params: { apiKey: this.currentApiKey }
+            }).toPromise();
+
+            if (response) {
+                console.log('✅ Загружены с сервера:', {
+                    dev_log: response.dev_log?.length,
+                    ai_insights: response.ai_insights?.length
+                });
+                
+                this.dev_log_signal.set(response.dev_log || this.DEFAULT_DEV_LOG);
+                this.ai_insights_signal.set(response.ai_insights || this.DEFAULT_AI_INSIGHTS);
+                
+                // Обновляем localStorage как кэш
+                localStorage.setItem(this.STORAGE_KEY_DEV, JSON.stringify(this.dev_log_signal()));
+                localStorage.setItem(this.STORAGE_KEY_AI, JSON.stringify(this.ai_insights_signal()));
+            }
+        } catch (error) {
+            console.error('❌ Ошибка при загрузке с сервера:', error);
+            // Fallback на локальные данные
+            this.loadFromLocalStorage();
+        } finally {
+            this.isLoading.set(false);
+        }
+    }
+
+    /**
+     * Загружаем данные из локального кэша (localStorage)
+     */
+    private loadFromLocalStorage() {
+        try {
+            console.log('📂 Загружаю данные из LocalStorage...');
+            
+            const devStored = localStorage.getItem(this.STORAGE_KEY_DEV);
+            if (devStored && devStored.trim()) {
+                const parsed = JSON.parse(devStored);
+                console.log('✅ Найдены Dev Log записи:', parsed.length);
+                this.dev_log_signal.set(parsed);
+            } else {
+                console.log('ℹ️ Dev Log в localStorage не найден, использую дефолтные');
+                this.dev_log_signal.set(this.DEFAULT_DEV_LOG);
+            }
+
+            const aiStored = localStorage.getItem(this.STORAGE_KEY_AI);
+            if (aiStored && aiStored.trim()) {
+                const parsed = JSON.parse(aiStored);
+                console.log('✅ Найдены AI Insights записи:', parsed.length);
+                this.ai_insights_signal.set(parsed);
+            } else {
+                console.log('ℹ️ AI Insights в localStorage не найден, использую дефолтные');
+                this.ai_insights_signal.set(this.DEFAULT_AI_INSIGHTS);
+            }
+        } catch (error) {
+            console.error('❌ Ошибка при загрузке из LocalStorage:', error);
+            this.dev_log_signal.set(this.DEFAULT_DEV_LOG);
+            this.ai_insights_signal.set(this.DEFAULT_AI_INSIGHTS);
+        }
+    }
+
+    /**
+     * Сохраняем на сервер
+     */
+    private async saveToServer() {
+        if (!this.currentApiKey) return;
+
+        try {
+            this.isSaving.set(true);
+            console.log('📡 Сохраняю записи на сервер...');
+            
+            await this.http.post('/api/entries/save', {
+                apiKey: this.currentApiKey,
+                dev_log: this.dev_log_signal(),
+                ai_insights: this.ai_insights_signal()
+            }).toPromise();
+
+            console.log('✅ Записи успешно сохранены на сервер');
+        } catch (error) {
+            console.error('❌ Ошибка при сохранении на сервер:', error);
+            // LocalStorage служит резервным хранилищем
+            this.fallbackToLocalStorage();
+        } finally {
+            this.isSaving.set(false);
+        }
+    }
+
+    /**
+     * Fallback: сохраняем локально если сервер недоступен
+     */
+    private fallbackToLocalStorage() {
+        try {
+            console.log('⚠️ Сохраняю локально как fallback');
+            localStorage.setItem(this.STORAGE_KEY_DEV, JSON.stringify(this.dev_log_signal()));
+            localStorage.setItem(this.STORAGE_KEY_AI, JSON.stringify(this.ai_insights_signal()));
+            console.log('✅ Локальное сохранение выполнено');
+        } catch (e) {
+            console.error('❌ Ошибка при локальном сохранении:', e);
+        }
+    }
+
+    /**
+     * Инициализируем данные из LocalStorage при старте
      */
     private initializeFromStorage() {
         try {

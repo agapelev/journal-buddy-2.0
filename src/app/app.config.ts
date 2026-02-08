@@ -3,6 +3,7 @@
 // https://angular.dev/api/core/ApplicationConfig
 
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 
 /**
  * Конфигурация приложения.
@@ -11,7 +12,10 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 export const appConfig: ApplicationConfig = {
   providers: [
     // Оптимизация производительности: уменьшаем количество циклов проверки изменений
-    provideZoneChangeDetection({ eventCoalescing: true })
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    
+    // HTTP клиент для сервера синхронизации
+    provideHttpClient()
 
     /**
      * НАЗИДАНИЕ:

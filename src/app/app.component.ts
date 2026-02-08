@@ -1,9 +1,10 @@
 // Copyright 2026 - Дневник разработки Льва и Gemini 3
 // Адаптировано из оригинального Google LLC образца
 
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JournalComponent } from './journal.component'
+import { JournalEntries } from './journal-entries';
 
 @Component({
   selector: 'app-root',
@@ -146,12 +147,15 @@ export class AppComponent implements OnInit {
   api_key = ""
   selected_journal = signal("")
   private readonly API_KEY_STORAGE_KEY = 'gemini_api_key_session';
+  private journalEntries = inject(JournalEntries);
 
   ngOnInit() {
     // 📚 Загружаем API ключ из SessionStorage при старте приложения
     const savedKey = sessionStorage.getItem(this.API_KEY_STORAGE_KEY);
     if (savedKey) {
       this.api_key = savedKey;
+      // Инициализируем журнал-entries с сохранённым ключом
+      this.journalEntries.initializeWithApiKey(savedKey);
     }
   }
 
@@ -160,6 +164,8 @@ export class AppComponent implements OnInit {
     this.api_key = value;
     if (value.trim() !== "") {
       sessionStorage.setItem(this.API_KEY_STORAGE_KEY, value);
+      // Инициализируем при вводе нового ключа
+      this.journalEntries.initializeWithApiKey(value);
     }
   }
 
