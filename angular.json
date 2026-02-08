@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gemini-test": {
+    "journal-with-gemini": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/gemini-test",
+            "outputPath": "dist/journal-with-gemini",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -57,10 +57,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gemini-test:build:production"
+              "buildTarget": "journal-with-gemini:build:production"
             },
             "development": {
-              "buildTarget": "gemini-test:build:development"
+              "buildTarget": "journal-with-gemini:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +68,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "gemini-test:build"
+            "buildTarget": "journal-with-gemini:build"
           }
         },
         "test": {

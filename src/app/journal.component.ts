@@ -1,5 +1,5 @@
 // Copyright 2026 - Основной компонент управления дневником Льва
-import { Component, inject, Input, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, Input, signal, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { EntryComponent } from './entry.component';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { JournalEntries } from './journal-entries';
@@ -64,54 +64,8 @@ import { FormsModule } from '@angular/forms';
     }
     </div>
     `,
-    styles: `
-    :host { font-family: 'Segoe UI', system-ui, sans-serif; }
-    .header_nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
-    .back_button { font-size:12px; font-weight: bold; padding: 6px 12px; background-color: #f1f3f4; border-radius: 20px; cursor: pointer; }
-    .back_button:hover { background-color: #e8eaed; }
-    .journal_title { font-weight: bold; color: #1a73e8; }
-
-    .add_entry_box { padding: 20px; margin: 20px; background: #fff; border: 1px solid #dadce0; border-radius: 12px; }
-    .add_entry_box textarea { width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; resize: vertical; }
-    .save_btn { background: #34a853; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-
-    .question_box { padding:20px; border: 1px solid #1a73e8; border-radius: 12px; margin: 20px; background: #f8fbff; }
-    .question_box label { display:block; font-weight:bold; margin-bottom:8px; color: #1a73e8; }
-    .question_box input { width: 100%; font-size: 16px; padding: 10px; border: 1px solid #dadce0; border-radius: 8px; margin-bottom: 12px; }
-    .ask_btn { background: #1a73e8; border: none; border-radius: 6px; padding: 10px 20px; color: #fff; font-weight: bold; cursor: pointer; }
-
-    .error_message { padding:10px; margin-bottom: 10px; background:#d93025; border-radius: 6px; color: white; }
-    .answer_box { padding: 20px; margin: 20px; border-radius: 12px; background: #f1f3f4; border-left: 6px solid #1a73e8; }
-    .answer_box h1 { font-size: 18px; color: #1a73e8; margin-bottom: 10px; }
-
-    .loading { text-align: center; padding: 20px; color: #1a73e8; font-weight: bold; }
-    .helper_heading { margin-top:15px; font-size:14px; font-weight:bold; }
-    .helper_list { font-size:14px; color: #1a73e8; cursor: pointer; list-style-type: none; padding: 0; }
-    .helper_list li { margin-top: 5px; text-decoration: underline; }
-    
-    .export_import_box { 
-      padding: 15px; 
-      margin: 20px; 
-      background: #fff3e0; 
-      border: 1px solid #ffb74d; 
-      border-radius: 12px;
-    }
-    .export_import_box h3 { margin-top: 0; color: #f57c00; }
-    .export_btn, .import_btn { 
-      margin-right: 10px;
-      padding: 8px 16px; 
-      border: 1px solid #ffb74d; 
-      background: #fff; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      font-weight: bold;
-      color: #f57c00;
-    }
-    .export_btn:hover { background: #fff3e0; }
-    .import_btn:hover { background: #fff3e0; }
-    
-    .journal_entries_header { margin: 20px; font-size: 22px; }
-    `
+    styles: [],
+    encapsulation: ViewEncapsulation.None
 })
 export class JournalComponent {
     @Input() api_key = ""
