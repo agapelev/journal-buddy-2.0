@@ -1,5 +1,5 @@
 // Copyright 2026 - Основной компонент управления дневником Льва
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, signal, ViewChild, ElementRef } from '@angular/core';
 import { EntryComponent } from './entry.component';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { JournalEntries } from './journal-entries';
@@ -50,6 +50,13 @@ import { FormsModule } from '@angular/forms';
     }
     </div>
 
+    <div class="export_import_box">
+    <h3>💾 Управление записями</h3>
+    <button class="export_btn" (click)="exportEntries()">📤 Экспортировать записи (JSON)</button>
+    <button class="import_btn" (click)="triggerImport()">📥 Импортировать записи</button>
+    <input #fileInput type="file" accept=".json" (change)="importEntries($event)" style="display:none" />
+    </div>
+
     <h1 class="journal_entries_header">Летопись событий:</h1>
     <div class="entries_container">
     @for(entry of journalEntries.getEntries(this.selected_journal);track entry) {
@@ -81,6 +88,28 @@ import { FormsModule } from '@angular/forms';
     .helper_heading { margin-top:15px; font-size:14px; font-weight:bold; }
     .helper_list { font-size:14px; color: #1a73e8; cursor: pointer; list-style-type: none; padding: 0; }
     .helper_list li { margin-top: 5px; text-decoration: underline; }
+    
+    .export_import_box { 
+      padding: 15px; 
+      margin: 20px; 
+      background: #fff3e0; 
+      border: 1px solid #ffb74d; 
+      border-radius: 12px;
+    }
+    .export_import_box h3 { margin-top: 0; color: #f57c00; }
+    .export_btn, .import_btn { 
+      margin-right: 10px;
+      padding: 8px 16px; 
+      border: 1px solid #ffb74d; 
+      background: #fff; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      font-weight: bold;
+      color: #f57c00;
+    }
+    .export_btn:hover { background: #fff3e0; }
+    .import_btn:hover { background: #fff3e0; }
+    
     .journal_entries_header { margin: 20px; font-size: 22px; }
     `
 })
@@ -228,5 +257,84 @@ export class JournalComponent {
             console.error('❌ Неизвестная ошибка:', errorMessage);
             return "-1";
         }
+    }
+
+    /**
+     * 📤 Экспортирует все записи текущего журнала в JSON файл
+     */
+    exportEntries() {
+        const entries = this.journalEntries.getEntries(this.selected_journal);
+        const journalName = this.selected_journal === 'dev_log' ? 'Dev Log' : 'AI Insights';
+        
+        const dataToExport = {
+            version: '1.0',
+            journal: this.selected_journal,
+            journalName: journalName,
+            exportedAt: new Date().toISOString(),
+            entries: entries
+        };
+
+        const jsonString = JSON.stringify(dataToExport, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `journal-${this.selected_journal}-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+        console.log(`✅ Экспортировано ${entries.length} записей из ${journalName}`);
+    }
+
+    /**
+     * 📥 Триггерит клик по скрытому input file
+     */
+    @ViewChild('fileInput') fileInput?: ElementRef;
+    
+    triggerImport() {
+        this.fileInput?.nativeElement.click();
+    }
+
+    /**
+     * 📥 Импортирует записи из JSON файла
+     */
+    importEntries(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        
+        if (!file) {
+            console.warn('Файл не выбран');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string;
+                const data = JSON.parse(content);
+                
+                if (data.entries && Array.isArray(data.entries)) {
+                    const importedCount = data.entries.length;
+                    console.log(`✅ Загружено ${importedCount} записей из файла`);
+                    
+                    // Добавляем каждую запись (они автоматически сохранятся в LocalStorage)
+                    for (const entry of data.entries) {
+                        this.journalEntries.addEntryToJournal(this.selected_journal, entry);
+                    }
+                    
+                    alert(`✅ Успешно импортировано ${importedCount} записей!\n\nЗаписи добавлены в начало журнала.`);
+                } else {
+                    alert('❌ Некорректный формат JSON. Требуется структура: { entries: [...] }');
+                }
+            } catch (error) {
+                console.error('Ошибка при импорте:', error);
+                alert('❌ Ошибка при импорте файла. Проверьте что это корректный JSON.');
+            }
+        };
+        
+        reader.readAsText(file);
+        // Сбрасываем input чтобы можно было импортировать тот же файл снова
+        input.value = '';
     }
 }
