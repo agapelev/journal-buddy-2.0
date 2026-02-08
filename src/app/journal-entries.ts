@@ -11,11 +11,8 @@ export class JournalEntries {
     private readonly STORAGE_KEY_DEV = 'journal_dev_log';
     private readonly STORAGE_KEY_AI = 'journal_ai_insights';
 
-    /**
-     * Используем сигналы (Signals) для реактивного обновления списка.
-     * Это позволяет интерфейсу мгновенно перерисовываться при добавлении новой записи.
-     */
-    private dev_log_signal = signal<JournalEntry[]>([
+    // Дефолтные записи
+    private readonly DEFAULT_DEV_LOG: JournalEntry[] = [
         {
             "date": "2026-02-08",
             "entry": "--- \n stack: Astro, Mantine, Svelte \n topic: UI Architecture \n --- \n Исследуем синергию Astro и Svelte. Astro идеально подходит для контентных сайтов (Школа Христа), а Svelte обеспечивает реактивность там, где она нужна. Mantine дает нам готовую библиотеку компонентов мирового уровня. Это 'святая троица' современного фронтенда.",
@@ -36,46 +33,79 @@ export class JournalEntries {
             "date": "2026-02-01",
             "entry": "--- \n project: Школа Христа \n goal: Structure \n --- \n Сформировали структуру каталогов. Серия 1 скоро будет перенесена из черновиков в основной проект на Astro. Используем Markdown для уроков — это просто, надежно и долговечно.",
         }
-    ]);
+    ];
 
-    private ai_insights_signal = signal<JournalEntry[]>([
+    private readonly DEFAULT_AI_INSIGHTS: JournalEntry[] = [
         {
             "date": "2026-02-08",
             "entry": "--- \n philosophy: AI Symbiosis \n --- \n ИИ не заменяет человека, он масштабирует его интенцию. Если в сердце мир — ИИ поможет его распространить. Если хаос — ИИ его умножит. Цифровое трезвение начинается с осознанного выбора инструментов.",
         }
-    ]);
+    ];
+
+    /**
+     * Используем сигналы (Signals) для реактивного обновления списка.
+     * Это позволяет интерфейсу мгновенно перерисовываться при добавлении новой записи.
+     */
+    private dev_log_signal = signal<JournalEntry[]>([]);
+    private ai_insights_signal = signal<JournalEntry[]>([]);
+    private isInitialized = false;
 
     constructor() {
-        this.loadFromStorage();
+        // Загружаем из localStorage ИЛИ используем дефолтные значения
+        this.initializeFromStorage();
         
-        // 💾 Автоматически сохраняем в LocalStorage при изменении
+        // 💾 Автоматически сохраняем в LocalStorage при изменении (только после инициализации)
         effect(() => {
+            if (!this.isInitialized) return; // Не сохраняем до инициализации
+            
             const devEntries = this.dev_log_signal();
+            console.log('💾 Сохраняю Dev Log:', devEntries.length, 'записей');
             localStorage.setItem(this.STORAGE_KEY_DEV, JSON.stringify(devEntries));
         });
 
         effect(() => {
+            if (!this.isInitialized) return; // Не сохраняем до инициализации
+            
             const aiEntries = this.ai_insights_signal();
+            console.log('💾 Сохраняю AI Insights:', aiEntries.length, 'записей');
             localStorage.setItem(this.STORAGE_KEY_AI, JSON.stringify(aiEntries));
         });
     }
 
     /**
-     * Загружаем записи из LocalStorage при инициализации сервиса.
+     * Инициализируем данные из LocalStorage или дефолтные значения
      */
-    private loadFromStorage() {
+    private initializeFromStorage() {
         try {
+            console.log('📂 Загружаю данные из LocalStorage...');
+            
             const devStored = localStorage.getItem(this.STORAGE_KEY_DEV);
-            if (devStored) {
-                this.dev_log_signal.set(JSON.parse(devStored));
+            if (devStored && devStored.trim()) {
+                const parsed = JSON.parse(devStored);
+                console.log('✅ Найдены Dev Log записи:', parsed.length);
+                this.dev_log_signal.set(parsed);
+            } else {
+                console.log('ℹ️ Dev Log в localStorage не найден, использую дефолтные');
+                this.dev_log_signal.set(this.DEFAULT_DEV_LOG);
             }
 
             const aiStored = localStorage.getItem(this.STORAGE_KEY_AI);
-            if (aiStored) {
-                this.ai_insights_signal.set(JSON.parse(aiStored));
+            if (aiStored && aiStored.trim()) {
+                const parsed = JSON.parse(aiStored);
+                console.log('✅ Найдены AI Insights записи:', parsed.length);
+                this.ai_insights_signal.set(parsed);
+            } else {
+                console.log('ℹ️ AI Insights в localStorage не найден, использую дефолтные');
+                this.ai_insights_signal.set(this.DEFAULT_AI_INSIGHTS);
             }
+            
+            this.isInitialized = true;
+            console.log('✅ Инициализация завершена');
         } catch (error) {
-            console.error('Ошибка при загрузке из LocalStorage:', error);
+            console.error('❌ Ошибка при загрузке из LocalStorage:', error);
+            this.dev_log_signal.set(this.DEFAULT_DEV_LOG);
+            this.ai_insights_signal.set(this.DEFAULT_AI_INSIGHTS);
+            this.isInitialized = true;
         }
     }
 
@@ -91,12 +121,31 @@ export class JournalEntries {
      * Сохраняй каждое свое техническое открытие — это твой цифровой капитал.
      */
     addEntryToJournal(journal: string, entry: JournalEntry) {
+        console.log(`➕ Добавляю запись в ${journal}:`, entry);
+        
         if (journal === 'dev_log') {
-            this.dev_log_signal.update(entries => [entry, ...entries]);
+            this.dev_log_signal.update(entries => {
+                const updated = [entry, ...entries];
+                try {
+                    localStorage.setItem(this.STORAGE_KEY_DEV, JSON.stringify(updated));
+                    console.log('💾 Немедленно сохранил Dev Log в LocalStorage:', updated.length);
+                } catch (e) {
+                    console.error('Ошибка при немедленном сохранении Dev Log:', e);
+                }
+                return updated;
+            });
         } else if (journal === 'ai_insights') {
-            this.ai_insights_signal.update(entries => [entry, ...entries]);
+            this.ai_insights_signal.update(entries => {
+                const updated = [entry, ...entries];
+                try {
+                    localStorage.setItem(this.STORAGE_KEY_AI, JSON.stringify(updated));
+                    console.log('💾 Немедленно сохранил AI Insights в LocalStorage:', updated.length);
+                } catch (e) {
+                    console.error('Ошибка при немедленном сохранении AI Insights:', e);
+                }
+                return updated;
+            });
         }
-        console.log(`Запись добавлена в ${journal}:`, entry);
     }
 
     private blank_entries = [
