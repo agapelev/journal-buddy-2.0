@@ -15,7 +15,7 @@ import { JournalEntries } from './journal-entries';
     <app-journal [api_key]="api_key" [selected_journal]="selected_journal()" [goBack]="goBack()" />
   } @else {
     <div class="heading">
-    <h1>Journal Buddy 2.0</h1>
+    <h1>Journal Web Arystan</h1>
     <p>Бортовой журнал разработчика: хроника взаимодействия с ИИ</p>
     </div>
 
