@@ -1,18 +1,6 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import { kv } from '@vercel/kv';
 
-interface JournalEntry {
-  date: string;
-  entry: string;
-}
-
-interface StoredEntries {
-  dev_log: JournalEntry[];
-  ai_insights: JournalEntry[];
-  lastUpdated: string;
-}
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req, res) {
   // Только GET запросы
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -42,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Парсим JSON данные
-    const entries: StoredEntries = typeof storedData === 'string' 
+    const entries = typeof storedData === 'string' 
       ? JSON.parse(storedData) 
       : storedData;
 
@@ -51,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('Error loading entries:', error);
     res.status(500).json({ 
       error: 'Failed to load entries',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error.message
     });
   }
 }

@@ -1,25 +1,13 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import { kv } from '@vercel/kv';
 
-interface JournalEntry {
-  date: string;
-  entry: string;
-}
-
-interface EntriesToSave {
-  apiKey: string;
-  dev_log: JournalEntry[];
-  ai_insights: JournalEntry[];
-}
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req, res) {
   // Только POST запросы
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { apiKey, dev_log, ai_insights } = req.body as EntriesToSave;
+    const { apiKey, dev_log, ai_insights } = req.body;
 
     // Валидация
     if (!apiKey) {
@@ -49,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('Error saving entries:', error);
     res.status(500).json({ 
       error: 'Failed to save entries',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error.message
     });
   }
 }
