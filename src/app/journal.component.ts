@@ -1,273 +1,171 @@
-// Copyright 2024 Google LLC
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     https://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-import { Component, inject, Input } from '@angular/core';
+// Copyright 2026 - Основной компонент управления дневником Льва
+import { Component, inject, Input, signal } from '@angular/core';
 import { EntryComponent } from './entry.component';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { JournalEntries } from './journal-entries';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-journal',
-  standalone: true,
-  imports: [EntryComponent, FormsModule],
-  template: `
+    selector: 'app-journal',
+    standalone: true,
+    imports: [EntryComponent, FormsModule],
+    template: `
+    <div class="header_nav">
+    <div class="back_button" (click)="goBack()">← К выбору журналов</div>
+    <div class="journal_title">Выбран: {{ selected_journal === 'dev_log' ? '🛠 Dev Log' : '🧠 AI Insights' }}</div>
+    </div>
 
-    <div class="back_button" (click)="goBack()">
-     ← Switch Journals
+    <div class="add_entry_box">
+    <h3>Записать новое событие</h3>
+    <textarea [(ngModel)]="newEntryText" placeholder="Что произошло сегодня в разработке?"></textarea>
+    <button class="save_btn" (click)="addNewEntry()">Сохранить в дневник</button>
     </div>
 
     <div class="question_box">
-        <div class="error_message" [hidden]="error_message.length == 0">
-            {{error_message}}
-        </div>
-        <label for="question">Ask me anything about your journal</label>
-        <input type="text" name="question" [(ngModel)]="question" (keyup)="inputChanged($event)" />
-        <button (click)="ask_question()">Ask</button>
-        <div class="helper_heading">Feeling stuck?</div>
-        <div class="helper_text">Try asking one of these questions:</div>
-        <ol class="helper_list">
-            <li (click)="ask('What was the highlight of my last week?')">What was the highlight of my last week?</li>
-            <li (click)="ask('What were my goals for this month, and have I made progress?')">What were my goals for this month, and have I made progress?</li>
-            <li (click)="ask('Can you summarize the overall mood of my journal this month?')">Can you summarize the overall mood of my journal this month?</li>
-        </ol>
+    <div class="error_message" [hidden]="error_message.length == 0">
+    {{error_message}}
+    </div>
+    <label for="question">Спросите Gemini о ваших записях</label>
+    <input type="text" name="question" [(ngModel)]="question" (keyup)="inputChanged($event)"
+    placeholder="Например: Какие баги мы исправили вчера?" />
+    <button class="ask_btn" (click)="ask_question()">Спросить Близнецов</button>
+
+    <div class="helper_heading">Идеи для вопросов:</div>
+    <ul class="helper_list">
+    <li (click)="ask('Сделай краткий обзор моих успехов за последнюю неделю')">Обзор успехов за неделю</li>
+    <li (click)="ask('Какие технические сложности у меня возникали чаще всего?')">Анализ сложностей</li>
+    <li (click)="ask('На основе моих записей, какой следующий шаг в обучении мне стоит сделать?')">Совет по обучению</li>
+    </ul>
     </div>
 
     <div class="loading" [hidden]="!loading">
-        Asking your question...
+    <div class="spinner"></div> Думаю над ответом...
     </div>
 
     <div class="answer_box" [hidden]="answer.length == 0">
-        <h1 [hidden]="!valid_answer">Gemini's answer:</h1>
-        @for(answerLine of answer.split("\n");track answerLine) {
-            <div>{{answerLine}}</div>
-        }
+    <h1 [hidden]="!valid_answer">Ответ Gemini 3:</h1>
+    @for(answerLine of answer.split("\n");track answerLine) {
+        <p>{{answerLine}}</p>
+    }
     </div>
 
-    <h1 class="journal_entries_header">Journal Entries:</h1>
+    <h1 class="journal_entries_header">Летопись событий:</h1>
+    <div class="entries_container">
     @for(entry of journalEntries.getEntries(this.selected_journal);track entry) {
         <app-entry [entry]="entry" />
     }
+    </div>
+    `,
+    styles: `
+    :host { font-family: 'Segoe UI', system-ui, sans-serif; }
+    .header_nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
+    .back_button { font-size:12px; font-weight: bold; padding: 6px 12px; background-color: #f1f3f4; border-radius: 20px; cursor: pointer; }
+    .back_button:hover { background-color: #e8eaed; }
+    .journal_title { font-weight: bold; color: #1a73e8; }
 
+    .add_entry_box { padding: 20px; margin: 20px; background: #fff; border: 1px solid #dadce0; border-radius: 12px; }
+    .add_entry_box textarea { width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; resize: vertical; }
+    .save_btn { background: #34a853; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
 
-`,
-  styles: `
-    * {
-        font-family: sans-serif;
-        max-width: 800px;
-    }
-    .back_button {
-        font-size:12px;
-        margin: 10px 0 0 20px;
-        font-weight: bold;
-        padding: 4px 8px;
-        background-color: #eee;
-        border-radius: 20px;
-        display: inline-block;
-    }
-    .back_button:hover {
-        cursor: pointer;
-        background-color: #ccc;
-    }
-    h1.journal_entries_header {
-        margin: 20px;
-        margin-bottom: 5px;
-        font-size: 20px;
-    }
-    .question_box {
-        padding:20px;
-        border:1px solid #ccc;
-        border-radius: 10px;
-        margin: 20px;
-    }
-    .question_box label {
-        display:block;
-        font-weight:bold;
-        margin-bottom:4px;
-    }
-    .question_box input {
-        width: 100%;
-        font-size: 18px;
-        padding: 2px;
-        margin: 10px 0;
-    }
-    .question_box button {
-        margin-top: 5px;
-        background: #0066cc;
-        border: 0px;
-        border-radius: 4px;
-        padding: 4px 10px;
-        color: #fff;
-    }
-    .question_box button:hover {
-        background: #4488ff;
-        cursor: pointer;
-    }
+    .question_box { padding:20px; border: 1px solid #1a73e8; border-radius: 12px; margin: 20px; background: #f8fbff; }
+    .question_box label { display:block; font-weight:bold; margin-bottom:8px; color: #1a73e8; }
+    .question_box input { width: 100%; font-size: 16px; padding: 10px; border: 1px solid #dadce0; border-radius: 8px; margin-bottom: 12px; }
+    .ask_btn { background: #1a73e8; border: none; border-radius: 6px; padding: 10px 20px; color: #fff; font-weight: bold; cursor: pointer; }
 
-  
+    .error_message { padding:10px; margin-bottom: 10px; background:#d93025; border-radius: 6px; color: white; }
+    .answer_box { padding: 20px; margin: 20px; border-radius: 12px; background: #f1f3f4; border-left: 6px solid #1a73e8; }
+    .answer_box h1 { font-size: 18px; color: #1a73e8; margin-bottom: 10px; }
 
-    .error_message {
-        padding:10px;
-        margin-bottom: 10px;
-        background:#ff474c;
-        border: 1px solid red;
-        border-radius: 4px;
-        font-size:14px;
-        color: white;
-    }
-
-    .answer_box {
-        padding: 10px;
-        margin: 20px;
-        border: 1px solid #444;
-        border-radius: 10px;
-        background: #eee;
-    }
-    .answer_box h1 {
-        font-weight: bold;
-        margin-bottom: 5px;
-        font-size: 16px;
-    }
-
-    .answer_box p {
-        margin-bottom:1px;
-    }
-    .loading {
-        text-align: center;
-        padding: 10px;
-        margin: 20px;
-        border: 1px solid #444;
-        border-radius: 10px;
-        background: #eee;
-        color: #444;
-        font-weight: bold;
-        font-size: 18px;
-    }
-    .helper_heading {
-        margin-top:20px;
-        font-size:16px;
-        font-weight:bold;
-        color:#444;
-    }
-    .helper_text {
-        font-size:14px;
-        color:#888;
-    }
-    .helper_list {
-        font-size:14px;
-    }
-    .helper_list li {
-        margin-bottom: 5px;
-        color:#555;
-        text-decoration: underline;
-    }
-    .helper_list li:hover {
-        cursor: pointer;
-        color: blue;
-        text-decoration: underline;
-    }
-`
+    .loading { text-align: center; padding: 20px; color: #1a73e8; font-weight: bold; }
+    .helper_heading { margin-top:15px; font-size:14px; font-weight:bold; }
+    .helper_list { font-size:14px; color: #1a73e8; cursor: pointer; list-style-type: none; padding: 0; }
+    .helper_list li { margin-top: 5px; text-decoration: underline; }
+    .journal_entries_header { margin: 20px; font-size: 22px; }
+    `
 })
 export class JournalComponent {
-
     @Input() api_key = ""
     @Input() selected_journal = ""
-    @Input() goBack = () => {
+    @Input() goBack = () => {}
 
+    journalEntries = inject(JournalEntries);
+
+    newEntryText = ""; // Текст новой записи
+    question = "";
+    answer = "";
+    valid_answer = false;
+    error_message = "";
+    loading = false;
+
+    /**
+     * НАЗИДАНИЕ: "Всякий, слышащий слова сии и исполняющий их,
+     * уподобится мужу благоразумному" (Мф. 7:24).
+     * Мы добавляем метод сохранения, чтобы твои труды не пропали впустую.
+     */
+    addNewEntry() {
+        if (!this.newEntryText.trim()) return;
+
+        const today = new Date().toISOString().split('T')[0];
+        const newEntry = {
+            date: today,
+            entry: `--- \n status: Logged \n --- \n ${this.newEntryText}`
+        };
+
+        // Вызываем метод сервиса (его мы обновим в следующем файле)
+        this.journalEntries.addEntryToJournal(this.selected_journal, newEntry);
+        this.newEntryText = "";
     }
-    
-    journalEntries = inject(JournalEntries)
 
-    question = ""
-    answer = ""
-    valid_answer = false
-    error_message = ""
-    loading = false
-    
     inputChanged(e: KeyboardEvent) {
-        if(e.key == "Enter") {
-            this.ask_question()
-        }
-        if(this.question != "") {
-            this.error_message = ""
-        }
+        if(e.key == "Enter") this.ask_question();
+        if(this.question != "") this.error_message = "";
     }
 
     async ask_question() {
         if(this.question == "") {
-            this.error_message = "Please enter a question to ask Gemini about your journal"
-            return
+            this.error_message = "Пожалуйста, введите вопрос для Gemini.";
+            return;
         }
-        await this.ask(this.question)
+        await this.ask(this.question);
     }
 
     async ask(question_to_ask: string) {
-        this.question = question_to_ask
-
+        this.question = question_to_ask;
         if(this.api_key.length == 0) {
-            this.error_message = "Please enter an API KEY for Gemini first."
-            return
+            this.error_message = "Отсутствует API ключ.";
+            return;
         }
 
-        this.loading = true
+        this.loading = true;
+        const today = new Date().toLocaleDateString('ru-RU');
 
-        const today = new Date();
-        const formattedDate = today.toLocaleDateString('en-US');
-        
-        let prompt = `This is today's date: ${formattedDate}. I'm passing you a list of journal entries at the end of this prompt. Here is a question the author just asked about all of the entries: ${question_to_ask}. Please pay attention to dates. The author might have said something like 'what did I do last month?'. Please use the current date I provided, and use the dates on each entry to look at the correct ones. Please answer the author's question. Be brief. If they ask about 1 entrey, 2-3 sentences is ok. If they ask about 2-3 entries, 1 sentence each, or a 3-5 sentence summary is ok. If they ask about more entires, just do 1-2 sentences each, like a bulleted list. Please try your best to answer the author's question. Here are the entries:\n`;
+        let prompt = `Сегодня: ${today}. Ты — мудрый помощник по анализу дневника разработчика. В конце сообщения я дам тебе записи. Ответь кратко на вопрос: ${question_to_ask}. Если записей много, используй список. Вот записи:\n`;
 
         for(let entry of this.journalEntries.getEntries(this.selected_journal)) {
-            prompt += `${entry.date}\n${entry.entry}\n\n`
+            prompt += `${entry.date}\n${entry.entry}\n\n`;
         }
-        const geminiOutput = await this.callGemini(prompt)
 
-        this.loading = false
+        const geminiOutput = await this.callGemini(prompt);
+        this.loading = false;
 
-        if(geminiOutput == "-1") {
-            // Error with gemini output
-            this.answer = "I cannot answer that question, please ask it in a different way."
-            this.valid_answer = false
-        } else if(geminiOutput == "-2") {
-            this.answer = "API key is invalid. Please go back and enter a valid API key."
-            this.valid_answer = false
+        if(geminiOutput == "-1" || geminiOutput == "-2") {
+            this.answer = geminiOutput == "-2" ? "Ошибка ключа API." : "Не удалось получить ответ.";
+            this.valid_answer = false;
         } else {
-            this.answer = geminiOutput
-            this.valid_answer = true
+            this.answer = geminiOutput;
+            this.valid_answer = true;
         }
-
     }
 
     async callGemini(prompt: string) {
         const genAI = new GoogleGenerativeAI(this.api_key);
-
-        const model = genAI.getGenerativeModel({
-          model: 'gemini-pro'
-        });
-            
+        const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
         try {
-          const result = await model.generateContent(prompt);
-          const response = await result.response;
-          const text = response.text();
-          return text
-        } catch(e: any) {
-            if(e.message.toLowerCase().includes("api key")) {
-                return "-2"
-            } else {
-                return "-1"
-            }
+            const result = await model.generateContent(prompt);
+            return (await result.response).text();
+        } catch(e) {
+            console.error(e);
+            return (e as any).message?.includes("key") ? "-2" : "-1";
         }
     }
-
-
 }
