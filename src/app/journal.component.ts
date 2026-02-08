@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
     template: `
     <div class="header_nav">
     <div class="back_button" (click)="goBack()">← К выбору журналов</div>
+    <button class="clear_key_in_journal" (click)="clearApiKeyFromJournal()">🔒 Очистить ключ</button>
     <div class="journal_title">Выбран: {{ selected_journal === 'dev_log' ? '🛠 Dev Log' : '🧠 AI Insights' }}</div>
     </div>
 
@@ -96,6 +97,18 @@ export class JournalComponent {
     valid_answer = false;
     error_message = "";
     loading = false;
+
+    // Удаляет API ключ из sessionStorage и перезагружает приложение
+    clearApiKeyFromJournal() {
+        try {
+            sessionStorage.removeItem('gemini_api_key_session');
+            console.log('✅ API ключ удалён из sessionStorage. Перезагружаю страницу.');
+            // Перезагружаем страницу, чтобы AppComponent заново прочитал состояние
+            location.reload();
+        } catch (e) {
+            console.error('Ошибка при удалении API ключа:', e);
+        }
+    }
 
     /**
      * НАЗИДАНИЕ: "Всякий, слышащий слова сии и исполняющий их,
