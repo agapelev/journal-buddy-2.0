@@ -1,28 +1,32 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Твой ключ
-const genAI = new GoogleGenerativeAI("AIzaSyAMf8sV0YXm7ITJAYeBqPcJYTliEEsLVfo");
+// Получаем API ключ из переменной окружения или аргументов
+const args = process.argv.slice(2);
+const keyArg = args.find(a => a.startsWith('--key='));
+const API_KEY = keyArg ? keyArg.split('=')[1] : process.env.GOOGLE_API_KEY;
+
+if (!API_KEY) {
+    console.error("\x1b[31m%s\x1b[0m", "❌ Ошибка: API ключ не найден!");
+    console.log("\nИспользование:");
+    console.log("  node scripts/list-models.js --key=ВАШ_КЛЮЧ");
+    process.exit(1);
+}
+
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 async function listAllModels() {
     try {
         console.log("🔍 Начинаю поиск доступных моделей в чертогах Google...\n");
 
-        // В Node.js SDK метод listModels обычно вызывается через итератор или прямое обращение
-        // Однако, самый надежный способ в текущих версиях - через fetch или встроенный метод, если он обновлен
-        // Но мы сделаем это правильно согласно документации SDK:
-
-        // Примечание: В некоторых версиях SDK прямого метода listModels может не быть в главном классе,
-        // тогда мы используем стандартный подход через REST-запрос, но давай попробуем официальный:
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${genAI.apiKey}`);
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}`);
         const data = await response.json();
 
         if (data.models) {
             console.log("✅ Найдены следующие модели:");
             console.table(data.models.map(m => ({
                 Имя: m.name.replace('models/', ''),
-                                                Описание: m.description,
-                                                Методы: m.supportedGenerationMethods.join(', ')
+                Описание: m.description,
+                Методы: m.supportedGenerationMethods.join(', ')
             })));
 
             const hasFlash = data.models.find(m => m.name.includes("flash"));
@@ -40,6 +44,3 @@ async function listAllModels() {
 }
 
 listAllModels();
-
-/* Документация по моделям: https://ai.google.dev/api/rest/v1beta/models/list
- */

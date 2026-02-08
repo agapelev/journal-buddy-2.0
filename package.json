@@ -1,14 +1,23 @@
 {
-  "name": "gemini-test",
-  "version": "0.0.0",
+  "name": "journal-with-gemini",
+  "version": "1.0.0",
+  "description": "📔 Digital Sobriety Journal & AI Developer Chronicle. Powered by Angular + Gemini 3 Flash",
+  "author": "Lev Nikolaevich",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/Journal-with-Gemini"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "dev": "ng serve --open",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^17.3.0",
     "@angular/common": "^17.3.0",

@@ -1,7 +1,7 @@
 // Copyright 2026 - Дневник разработки Льва и Gemini 3
 // Адаптировано из оригинального Google LLC образца
 
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JournalComponent } from './journal.component'
 
@@ -22,7 +22,10 @@ import { JournalComponent } from './journal.component'
     <label for="api_key">Gemini API key</label>
     <p>Введите ваш API ключ для доступа к модели Gemini 3 Flash</p>
     <p class="api_key_help">Ключ можно получить в <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank">Google AI Studio</a></p>
-    <input type="text" name="api_key" [(ngModel)]="api_key" placeholder="Вставьте ваш API KEY здесь..." />
+    <input type="text" name="api_key" [(ngModel)]="api_key" (ngModelChange)="onApiKeyChange($event)" placeholder="Вставьте ваш API KEY здесь..." />
+    @if(api_key) {
+      <button class="clear_key_btn" (click)="clearApiKey()">🔄 Очистить ключ</button>
+    }
     </div>
 
     <p class="helper_text">Выберите категорию записей для анализа нейросетью:</p>
@@ -91,6 +94,22 @@ import { JournalComponent } from './journal.component'
     margin-top: 8px;
   }
   .api_key_help a { color: #1a73e8; text-decoration: none; }
+  .clear_key_btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #f1f3f4;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    color: #5f6368;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .clear_key_btn:hover {
+    background: #e8eaed;
+    color: #202124;
+  }
   .journals {
     padding: 20px;
     display: grid;
@@ -123,11 +142,35 @@ import { JournalComponent } from './journal.component'
   }
   `
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   api_key = ""
   selected_journal = signal("")
+  private readonly API_KEY_STORAGE_KEY = 'gemini_api_key_session';
 
-  // Возврат к списку журналов
+  ngOnInit() {
+    // 📚 Загружаем API ключ из SessionStorage при старте приложения
+    const savedKey = sessionStorage.getItem(this.API_KEY_STORAGE_KEY);
+    if (savedKey) {
+      this.api_key = savedKey;
+    }
+  }
+
+  // 💾 Сохраняем ключ в SessionStorage при изменении
+  onApiKeyChange(value: string) {
+    this.api_key = value;
+    if (value.trim() !== "") {
+      sessionStorage.setItem(this.API_KEY_STORAGE_KEY, value);
+    }
+  }
+
+  // 🔄 Очищаем старый ключ и SessionStorage
+  clearApiKey() {
+    this.api_key = "";
+    sessionStorage.removeItem(this.API_KEY_STORAGE_KEY);
+    console.log("✅ Ключ удален. Введите новый ключ.");
+  }
+
+  // Возврат к списку журналов и очистка данных при необходимости
   goBack() {
     return () => {
       this.selected_journal.set("")

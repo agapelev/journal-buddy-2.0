@@ -1,3 +1,40 @@
+# Dependencies
 node_modules
+npm-debug.log
+yarn-error.log
+
+# Angular
 .angular
+dist/
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
 .DS_Store
+
+# Build outputs
+*.js.map
+*.css.map
+
+# Test outputs
+coverage/
+test-results/
+
+# API Keys (NEVER commit these!)
+api-key.txt
+test-api-key.js
+scripts/*.local.js
+
+# Logs
+logs/
+*.log

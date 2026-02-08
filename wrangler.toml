@@ -1,0 +1,6 @@
+name = "journal-with-gemini-cf"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist/journal-with-gemini/browser"
+
+[env.production]
+name = "production"

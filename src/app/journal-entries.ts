@@ -1,5 +1,5 @@
 // Copyright 2026 - Бортовой журнал Льва: Хроники Технологий и ИИ
-import { Injectable, signal } from "@angular/core"
+import { Injectable, signal, effect } from "@angular/core"
 
 export interface JournalEntry {
     date: string;
@@ -8,6 +8,8 @@ export interface JournalEntry {
 
 @Injectable({providedIn: "root"})
 export class JournalEntries {
+    private readonly STORAGE_KEY_DEV = 'journal_dev_log';
+    private readonly STORAGE_KEY_AI = 'journal_ai_insights';
 
     /**
      * Используем сигналы (Signals) для реактивного обновления списка.
@@ -42,6 +44,40 @@ export class JournalEntries {
             "entry": "--- \n philosophy: AI Symbiosis \n --- \n ИИ не заменяет человека, он масштабирует его интенцию. Если в сердце мир — ИИ поможет его распространить. Если хаос — ИИ его умножит. Цифровое трезвение начинается с осознанного выбора инструментов.",
         }
     ]);
+
+    constructor() {
+        this.loadFromStorage();
+        
+        // 💾 Автоматически сохраняем в LocalStorage при изменении
+        effect(() => {
+            const devEntries = this.dev_log_signal();
+            localStorage.setItem(this.STORAGE_KEY_DEV, JSON.stringify(devEntries));
+        });
+
+        effect(() => {
+            const aiEntries = this.ai_insights_signal();
+            localStorage.setItem(this.STORAGE_KEY_AI, JSON.stringify(aiEntries));
+        });
+    }
+
+    /**
+     * Загружаем записи из LocalStorage при инициализации сервиса.
+     */
+    private loadFromStorage() {
+        try {
+            const devStored = localStorage.getItem(this.STORAGE_KEY_DEV);
+            if (devStored) {
+                this.dev_log_signal.set(JSON.parse(devStored));
+            }
+
+            const aiStored = localStorage.getItem(this.STORAGE_KEY_AI);
+            if (aiStored) {
+                this.ai_insights_signal.set(JSON.parse(aiStored));
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке из LocalStorage:', error);
+        }
+    }
 
     getEntries(selected_journal: string) {
         if(selected_journal == "dev_log") return this.dev_log_signal();

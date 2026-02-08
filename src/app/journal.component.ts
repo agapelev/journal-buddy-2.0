@@ -131,8 +131,16 @@ export class JournalComponent {
 
     async ask(question_to_ask: string) {
         this.question = question_to_ask;
-        if(this.api_key.length == 0) {
-            this.error_message = "Отсутствует API ключ.";
+        this.error_message = "";
+        
+        // Проверка API ключа перед запросом
+        if(!this.api_key || this.api_key.trim().length === 0) {
+            this.error_message = "❌ Отсутствует API ключ. Вернитесь на главный экран и введите ключ.";
+            return;
+        }
+        
+        if(this.api_key.trim().length < 20) {
+            this.error_message = "⚠️ API ключ слишком короткий. Проверьте его правильность.";
             return;
         }
 
@@ -148,9 +156,14 @@ export class JournalComponent {
         const geminiOutput = await this.callGemini(prompt);
         this.loading = false;
 
-        if(geminiOutput == "-1" || geminiOutput == "-2") {
-            this.answer = geminiOutput == "-2" ? "Ошибка ключа API." : "Не удалось получить ответ.";
+        if(geminiOutput == "-1") {
+            this.answer = "❌ Не удалось получить ответ от Gemini. Проверьте подключение к интернету и попробуйте еще раз.";
             this.valid_answer = false;
+            this.error_message = "Ошибка при запросе к Gemini";
+        } else if(geminiOutput == "-2") {
+            this.answer = "🔴 Ошибка API ключа. Убедитесь, что ключ введен правильно и имеет необходимые разрешения. Вернитесь на главный экран и проверьте ключ.";
+            this.valid_answer = false;
+            this.error_message = "Неверный или истекший API ключ";
         } else {
             this.answer = geminiOutput;
             this.valid_answer = true;
@@ -158,14 +171,49 @@ export class JournalComponent {
     }
 
     async callGemini(prompt: string) {
+        if (!this.api_key || this.api_key.trim().length === 0) {
+            return "-2"; // Ошибка ключа API
+        }
+
         const genAI = new GoogleGenerativeAI(this.api_key);
         const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+        
         try {
             const result = await model.generateContent(prompt);
-            return (await result.response).text();
-        } catch(e) {
-            console.error(e);
-            return (e as any).message?.includes("key") ? "-2" : "-1";
+            const response = await result.response;
+            const text = response.text();
+            
+            if (!text || text.trim().length === 0) {
+                console.warn('Gemini вернул пустой ответ');
+                return "-1";
+            }
+            
+            return text;
+        } catch(error: any) {
+            console.error('Ошибка при запросе к Gemini:', error);
+            
+            // Более точная диагностика ошибок
+            const errorMessage = error?.message || String(error);
+            const statusCode = error?.status;
+            
+            // Проверяем конкретные причины ошибки
+            if (errorMessage.includes('API key') || errorMessage.includes('API_KEY_INVALID') || statusCode === 401) {
+                console.error('🔴 Ошибка валидации API ключа. Проверьте правильность ключа.');
+                return "-2";
+            }
+            
+            if (errorMessage.includes('quota') || statusCode === 429) {
+                console.error('⚠️ Исчерпана квота запросов. Попробуйте позже.');
+                return "-1";
+            }
+            
+            if (statusCode === 403) {
+                console.error('🚫 Доступ запрещен. Проверьте разрешения API ключа.');
+                return "-2";
+            }
+            
+            console.error('❌ Неизвестная ошибка:', errorMessage);
+            return "-1";
         }
     }
 }
