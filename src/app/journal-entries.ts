@@ -100,6 +100,7 @@ export class JournalEntries {
         try {
             this.isLoading.set(true);
             console.log('📡 Загружаю записи с сервера...');
+            console.log('🔗 URL: /api/entries/load?apiKey=...', this.currentApiKey.slice(0, 10) + '...');
             
             const response = await this.http.get<StoredEntries>('/api/entries/load', {
                 params: { apiKey: this.currentApiKey }
@@ -120,6 +121,10 @@ export class JournalEntries {
             }
         } catch (error) {
             console.error('❌ Ошибка при загрузке с сервера:', error);
+            console.error('📋 Детали:', {
+                message: error instanceof Error ? error.message : String(error),
+                status: error instanceof Error && 'status' in error ? (error as any).status : 'unknown'
+            });
             // Fallback на локальные данные
             this.loadFromLocalStorage();
         } finally {
@@ -169,16 +174,24 @@ export class JournalEntries {
         try {
             this.isSaving.set(true);
             console.log('📡 Сохраняю записи на сервер...');
+            console.log('📨 Отправляю данные:', {
+                dev_log_count: this.dev_log_signal().length,
+                ai_insights_count: this.ai_insights_signal().length
+            });
             
-            await this.http.post('/api/entries/save', {
+            const response = await this.http.post('/api/entries/save', {
                 apiKey: this.currentApiKey,
                 dev_log: this.dev_log_signal(),
                 ai_insights: this.ai_insights_signal()
             }).toPromise();
 
-            console.log('✅ Записи успешно сохранены на сервер');
+            console.log('✅ Записи успешно сохранены на сервер:', response);
         } catch (error) {
             console.error('❌ Ошибка при сохранении на сервер:', error);
+            console.error('📋 Детали:', {
+                message: error instanceof Error ? error.message : String(error),
+                status: error instanceof Error && 'status' in error ? (error as any).status : 'unknown'
+            });
             // LocalStorage служит резервным хранилищем
             this.fallbackToLocalStorage();
         } finally {
