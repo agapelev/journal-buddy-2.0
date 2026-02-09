@@ -10,13 +10,13 @@ import { FormsModule } from '@angular/forms';
     standalone: true,
     imports: [EntryComponent, FormsModule],
     template: `
-    <div class="header_nav">
-    <div class="back_button" (click)="goBack()">← К выбору журналов</div>
-    <button class="clear_key_in_journal" (click)="clearApiKeyFromJournal()">🔒 Очистить ключ</button>
-    <div class="journal_title">Выбран: {{ selected_journal === 'dev_log' ? '🛠 Dev Log' : '🧠 AI Insights' }}</div>
+    <div class="header_nav bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div class="back_button bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" (click)="goBack()">← К выбору журналов</div>
+    <button class="clear_key_in_journal bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" (click)="clearApiKeyFromJournal()">🔒 Очистить ключ</button>
+    <div class="journal_title text-blue-600 dark:text-blue-400">Выбран: {{ selected_journal === 'dev_log' ? '🛠 Dev Log' : '🧠 AI Insights' }}</div>
     </div>
 
-    <div class="add_entry_box">
+    <div class="add_entry_box bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
     <h3>Записать новое событие</h3>
     <textarea [(ngModel)]="newEntryText" placeholder="Что произошло сегодня в разработке?"></textarea>
     <button class="save_btn" (click)="addNewEntry()">Сохранить в дневник</button>
