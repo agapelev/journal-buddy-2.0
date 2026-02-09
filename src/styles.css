@@ -31,36 +31,6 @@ body.dark {
   position: relative;
 }
 
-/* Theme Toggle */
-.theme-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.theme-toggle button {
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.theme-toggle button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-body.dark .theme-toggle button {
-  background: rgba(30, 41, 59, 0.9);
-  color: #f1f5f9;
-}
-
 /* Main Content */
 .main-content {
   flex: 1;
@@ -347,349 +317,11 @@ body.dark .card-title {
   }
 }
 
-/* Heading styles */
-.heading { 
-  margin-bottom: 30px; 
-}
 
-.heading h1 {
-  font-size: 32px;
-  margin: 10px;
-  transition: color 0.3s ease;
-}
 
-.heading p {
-  font-size: 16px;
-  margin: 10px;
-  transition: color 0.3s ease;
-}
 
-.subtitle-text {
-  font-size: 14px !important;
-  color: #5f6368;
-  margin: 10px;
-}
 
-body.dark .subtitle-text {
-  color: #cbd5e1;
-}
 
-.subtitle-text::before,
-.subtitle-text::after {
-  color: #5f6368;
-}
-
-body.dark .subtitle-text::before,
-body.dark .subtitle-text::after {
-  color: #cbd5e1;
-}
-
-/* ===== EACH WORD A DIFFERENT COLOR ===== */
-
-/* First line words - Journal Web Arystan */
-.h1-word {
-  font-weight: 600;
-  margin-right: 8px;
-  transition: color 0.3s ease;
-}
-
-.h1-w1 {
-  color: #FF4444;
-}
-
-body.dark .h1-w1 {
-  color: #FF7B7B;
-}
-
-.h1-w2 {
-  color: #4ECDC4;
-}
-
-body.dark .h1-w2 {
-  color: #7DEDDA;
-}
-
-.h1-w3 {
-  color: #8B5CF6;
-}
-
-body.dark .h1-w3 {
-  color: #C4B5FD;
-}
-
-/* Second line words - Web Development Studio Web Arystan */
-.p-word {
-  font-weight: 600;
-  margin-right: 6px;
-  transition: color 0.3s ease;
-}
-
-.p-w1 {
-  color: #22C55E;
-}
-
-body.dark .p-w1 {
-  color: #86EFAC;
-}
-
-.p-w2 {
-  color: #06B6D4;
-}
-
-body.dark .p-w2 {
-  color: #67E8F9;
-}
-
-.p-w3 {
-  color: #FFD700;
-}
-
-body.dark .p-w3 {
-  color: #FFE873;
-}
-
-.p-w4 {
-  color: #FF69B4;
-}
-
-body.dark .p-w4 {
-  color: #FF99CC;
-}
-
-.p-w5 {
-  color: #FF4444;
-}
-
-body.dark .p-w5 {
-  color: #FF7B7B;
-}
-
-/* Helper text */
-.helper_text {
-  font-size: 14px;
-  color: #888;
-  margin: 10px;
-  margin-top: 40px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: color 0.3s ease;
-}
-
-body.dark .helper_text {
-  color: #94a3b8;
-}
-
-/* Gemini API Key section */
-.gemini_api_key {
-  padding: 25px;
-  border: 2px solid #e8f0fe;
-  border-radius: 12px;
-  margin: 10px;
-  background-color: #f8f9fa;
-  transition: all 0.3s ease;
-}
-
-body.dark .gemini_api_key {
-  border-color: #334155;
-  background-color: #1e293b;
-}
-
-.gemini_api_key label {
-  display: block;
-  font-weight: bold;
-  color: #1a73e8;
-  margin-bottom: 8px;
-  transition: color 0.3s ease;
-}
-
-body.dark .gemini_api_key label {
-  color: #5b9eff;
-}
-
-.gemini_api_key input {
-  width: 100%;
-  font-size: 16px;
-  padding: 10px;
-  border: 1px solid #dadce0;
-  border-radius: 6px;
-  margin-top: 5px;
-  background-color: white;
-  color: #202124;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-body.dark .gemini_api_key input {
-  border-color: #475569;
-  background-color: #0f172a;
-  color: #e2e8f0;
-}
-
-.api_key_help {
-  font-size: 12px;
-  color: #70757a;
-  margin-top: 8px;
-  transition: color 0.3s ease;
-}
-
-body.dark .api_key_help {
-  color: #94a3b8;
-}
-
-.api_key_help a { 
-  color: #1a73e8; 
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-body.dark .api_key_help a {
-  color: #5b9eff;
-}
-
-/* Button styles */
-.clear_key_btn {
-  width: 100%;
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #f1f3f4;
-  border: 1px solid #dadce0;
-  border-radius: 6px;
-  color: #5f6368;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-}
-
-.clear_key_btn:hover {
-  background: #e8eaed;
-  color: #202124;
-}
-
-body.dark .clear_key_btn {
-  background: #334155;
-  border-color: #475569;
-  color: #cbd5e1;
-}
-
-body.dark .clear_key_btn:hover {
-  background: #475569;
-  color: #f1f5f9;
-}
-
-/* Journal cards */
-.journals {
-  padding: 20px;
-  display: grid;
-  gap: 20px;
-}
-
-.journals div {
-  padding: 24px;
-  border: 1px solid #dadce0;
-  border-radius: 12px;
-  transition: all 0.2s ease-in-out;
-  background: white;
-}
-
-body.dark .journals div {
-  border-color: #475569;
-  background: #1e293b;
-}
-
-.journals div:hover {
-  cursor: pointer;
-  background: #f1f8ff;
-  border: 1px solid #1a73e8;
-  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1);
-  transform: translateY(-2px);
-}
-
-body.dark .journals div:hover {
-  background: #0f172a;
-  border: 1px solid #5b9eff;
-  box-shadow: 0 4px 12px rgba(91, 158, 255, 0.2);
-}
-
-.journals div h2 {
-  font-size: 20px;
-  margin: 0 0 10px 0;
-  color: #202124;
-  transition: color 0.3s ease;
-}
-
-body.dark .journals div h2 {
-  color: #f1f5f9;
-}
-
-.journals div p {
-  font-size: 14px;
-  color: #5f6368;
-  line-height: 1.5;
-  margin: 0;
-  transition: color 0.3s ease;
-}
-
-body.dark .journals div p {
-  color: #cbd5e1;
-}
-
-/* ===== РАЗНЫЕ ЦВЕТА ДЛЯ БЛОКОВ НА ГЛАВНОЙ ===== */
-.journals div:nth-child(1) {
-  border-left: 6px solid #d97706;
-}
-
-.journals div:nth-child(1):hover {
-  border-left-color: #f59e0b;
-  background: #fef3c7;
-}
-
-body.dark .journals div:nth-child(1) {
-  border-left-color: #ea580c;
-}
-
-body.dark .journals div:nth-child(1):hover {
-  border-left-color: #f59e0b;
-  background: #1e1410;
-}
-
-/* Фиолетовый */
-.journals div:nth-child(2) {
-  border-left: 6px solid #7c3aed;
-}
-
-.journals div:nth-child(2):hover {
-  border-left-color: #a78bfa;
-  background: #f3e8ff;
-}
-
-body.dark .journals div:nth-child(2) {
-  border-left-color: #8b5cf6;
-}
-
-body.dark .journals div:nth-child(2):hover {
-  border-left-color: #a78bfa;
-  background: #1e0d3d;
-}
-
-/* Тёмно-светло-синий */
-.journals div:nth-child(3) {
-  border-left: 6px solid #0369a1;
-}
-
-.journals div:nth-child(3):hover {
-  border-left-color: #0ea5e9;
-  background: #e0f2fe;
-}
-
-body.dark .journals div:nth-child(3) {
-  border-left-color: #0284c7;
-}
-
-body.dark .journals div:nth-child(3):hover {
-  border-left-color: #0ea5e9;
-  background: #051e30;
-}
 
 /* ===== JOURNAL COMPONENT STYLES ===== */
 .header_nav {
@@ -1133,4 +765,116 @@ body.dark .metadata_line {
   background: #1f2937;
   color: #94a3b8;
   border-color: #475569;
+}
+
+/* Новые стили для Header Component */
+.main-header {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 15px 30px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+body.dark .main-header {
+  background: rgba(30, 41, 59, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left .logo {
+  height: 32px; /* Adjust as needed */
+}
+
+.header-nav ul {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: #334155; /* Tailwind gray-700 */
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.header-nav a:hover {
+  color: #3b82f6; /* Tailwind blue-500 */
+}
+
+body.dark .header-nav a {
+  color: #e2e8f0; /* Tailwind gray-200 */
+}
+
+body.dark .header-nav a:hover {
+  color: #60a5fa; /* Tailwind blue-400 */
+}
+
+.theme-toggle-button {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.dark .theme-toggle-button {
+  background: rgba(30, 41, 59, 0.9);
+  color: #f1f5f9;
+}
+
+/* Adjust main content padding to not be hidden by fixed header */
+.main-content {
+  padding-top: 80px; /* Height of header + some spacing */
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    padding: 10px 15px;
+  }
+
+  .header-nav ul {
+    gap: 15px;
+  }
+
+  .header-nav a {
+    font-size: 0.9rem;
+  }
+
+  .theme-toggle-button {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .main-content {
+    padding-top: 70px;
+  }
 }

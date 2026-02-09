@@ -8,19 +8,15 @@ import { JournalComponent } from './journal.component'
 import { JournalEntries } from './journal-entries';
 import { ThemeService } from './theme.service';
 
+import { HeaderComponent } from './header/header.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [JournalComponent, FormsModule, CommonModule],
+  imports: [JournalComponent, FormsModule, CommonModule, HeaderComponent],
   template: `
   <div class="app-container">
-    <!-- Theme Toggle -->
-    <div class="theme-toggle">
-      <button (click)="themeService.toggleTheme()" [attr.title]="themeService.isDark() ? 'Светлая тема' : 'Тёмная тема'">
-        {{ themeService.isDark() ? '☀️' : '🌙' }}
-      </button>
-    </div>
-
+    <app-header></app-header>
     <!-- Main Content -->
     <main class="main-content">
       @if(this.api_key && this.selected_journal()) {
