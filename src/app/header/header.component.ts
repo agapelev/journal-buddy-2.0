@@ -11,7 +11,7 @@ import { ThemeService } from '../theme.service';
       <div class="header-content">
         <div class="header-left">
           <!-- Logo will go here -->
-          <img src="assets/web-arystan-logo.svg" alt="Web Arystan Logo" class="logo" />
+          <img src="assets/logo-ms-sock.png" alt="Web Arystan Logo" class="logo" />
         </div>
         <nav class="header-nav">
           <ul>
