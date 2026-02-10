@@ -9,11 +9,12 @@ import { JournalEntries } from './journal-entries';
 import { ThemeService } from './theme.service';
 
 import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [JournalComponent, FormsModule, CommonModule, HeaderComponent],
+  imports: [JournalComponent, FormsModule, CommonModule, HeaderComponent, FooterComponent],
   template: `
   <div class="app-container">
     <app-header></app-header>
@@ -78,6 +79,7 @@ import { HeaderComponent } from './header/header.component';
         </section>
       }
     </main>
+    <app-footer></app-footer>
   </div>
   `,
   styles: [],
