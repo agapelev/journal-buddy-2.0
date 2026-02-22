@@ -7,33 +7,53 @@ import { ThemeService } from '../theme.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <header class="main-header">
-      <div class="header-content">
-        <div class="header-left">
-          <!-- Logo will go here -->
-          <img src="assets/logo-ms-sock.png" alt="Web Arystan Logo" class="logo" />
-        </div>
-        <nav class="header-nav">
-          <ul>
-            <li *ngFor="let link of navLinks">
-              <a [href]="link.url" target="_blank" rel="noopener">{{ link.label }}</a>
-            </li>
-          </ul>
-        </nav>
-        <div class="header-right">
-          <!-- Theme toggle button -->
-          <button
-            (click)="themeService.toggleTheme()"
-            class="theme-toggle-button"
-            [attr.title]="themeService.isDark() ? 'Светлая тема' : 'Тёмная тема'"
-          >
-            {{ themeService.isDark() ? '☀️' : '🌙' }}
-          </button>
-        </div>
-      </div>
-    </header>
+  <header class="main-header">
+  <div class="header-content">
+  <div class="header-left">
+  <!-- Кликабельный логотип как обычная ссылка -->
+  <a href="/" class="logo-link">
+  <img src="assets/logo-ms-sock.png" alt="Web Arystan Logo" class="logo" />
+  </a>
+  </div>
+  <nav class="header-nav">
+  <ul>
+  <li *ngFor="let link of navLinks">
+  <a [href]="link.url" target="_blank" rel="noopener">{{ link.label }}</a>
+  </li>
+  </ul>
+  </nav>
+  <div class="header-right">
+  <!-- Theme toggle button -->
+  <button
+  (click)="themeService.toggleTheme()"
+  class="theme-toggle-button"
+  [attr.title]="themeService.isDark() ? 'Светлая тема' : 'Тёмная тема'"
+  >
+  {{ themeService.isDark() ? '☀️' : '🌙' }}
+  </button>
+  </div>
+  </div>
+  </header>
   `,
-  styles: [],
+  styles: [
+    `
+    .logo-link {
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .logo {
+      height: 40px;
+      width: auto;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .logo:hover {
+      opacity: 0.8;
+    }
+    `
+  ],
   encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent {
