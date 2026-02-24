@@ -81,14 +81,14 @@ import { FooterComponent } from './footer/footer.component';
   }
   <header class="welcome-section">
   <h1 class="main-title">
-  <span class="title-word title-1">Journal</span>
-  <span class="title-word title-2">Web</span>
-  <span class="title-word title-3">Arystan</span>
+  <span class="title-word title-1">Shekinah</span>
+  <span class="title-word title-2">Mission</span>
+  <span class="title-word title-3">Cloud</span>
   </h1>
   <p class="subtitle">
-  <span class="subtitle-word subtitle-1">Web</span>
-  <span class="subtitle-word subtitle-2">Development</span>
-  <span class="subtitle-word subtitle-3">Studio</span>
+  <span class="subtitle-word subtitle-1">Мы используем Angular, Gemini и Git</span>
+  <span class="subtitle-word subtitle-2">не ради них самих,</span>
+  <span class="subtitle-word subtitle-3">а чтобы явить творческую силу, данную Богом.</span>
   </p>
   </header>
   <header class="welcome-section">
@@ -98,9 +98,9 @@ import { FooterComponent } from './footer/footer.component';
   <span class="subtitle-word subtitle-3">Kazakstan</span>
   </h1>
   <p class="subtitle">
-  <span class="subtitle-word subtitle-1">The</span>
-  <span class="subtitle-word subtitle-2">School of Christ</span>
-  <span class="subtitle-word subtitle-3">International</span>
+  <span class="subtitle-word subtitle-1">В эпоху ИИ важно не потерять самопознание.</span>
+  <span class="subtitle-word subtitle-2">Технология — лишь служанка, а господин — дух,</span>
+  <span class="subtitle-word subtitle-3">обученный в Школе Христа.</span>
   </p>
   </header>28
   </main>
