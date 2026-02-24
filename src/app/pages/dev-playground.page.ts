@@ -1,0 +1,147 @@
+<!-- Copyright 2024 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Journal Web Arystan</title>
+<base href="/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<header class="welcome-section">
+<h2 class="main-title">
+<span class="title-word title-1">Shekinah</span>
+<span class="title-word title-2">Mission</span>
+<span class="title-word title-3">Cloud</span>
+</h2>
+<p class="subtitle">
+<span class="subtitle-word subtitle-1">Мы используем Angular, Gemini и Git</span>
+<span class="subtitle-word subtitle-2">не ради них самих,</span>
+<span class="subtitle-word subtitle-3">а чтобы явить творческую силу, данную Богом.</span>
+</p>
+</header>
+<header class="welcome-section">
+<h3 class="main-title font-bold text-5xl text-center">
+<span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-300 animate-pulse">
+School
+</span>
+<span class="text-slate-400 italic mx-2">of</span>
+<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-500 drop-shadow-lg">
+Christ
+</span>
+</h3>
+<p class="subtitle">
+<span class="subtitle-word subtitle-1">В эпоху ИИ важно не потерять самопознание.</span>
+<span class="subtitle-word subtitle-2">Технология — лишь служанка, а господин — дух,</span>
+<span class="subtitle-word subtitle-3">обученный в Школе Христа.</span>
+</p>
+
+# Tailwind
+
+1. Эффект «Божественного Сияния» (Градиент и Текст)
+
+Вместо обычного цвета мы заставим буквы переливаться. Это создаёт ощущение глубины.
+
+<h3 class="main-title font-bold text-5xl text-center">
+<span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-300 animate-pulse">
+School
+</span>
+<span class="text-slate-400 italic mx-2">of</span>
+<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-500 drop-shadow-lg">
+Christ
+</span>
+</h3>
+
+bg-clip-text text-transparent: Делает текст прозрачным, проявляя фоновый градиент.
+
+animate-pulse: Мягкое мерцание (эффект «дыхания»).
+
+2. Эффект «Трезвения и Фокуса» (Blur & Hover)
+
+Сделаем так, чтобы при наведении заголовок становился четче или менял тень.
+
+<h3 class="group cursor-default transition-all duration-700">
+<span class="subtitle-word subtitle-1 blur-[1px] group-hover:blur-0 transition-all duration-500">
+School
+</span>
+<span class="title-word title-2 opacity-50 group-hover:opacity-100">of</span>
+<span class="subtitle-word subtitle-3 tracking-widest group-hover:tracking-normal transition-all duration-1000">
+Christ
+</span>
+</h3>
+
+<h3 class="group cursor-default transition-all duration-700">
+<span class="subtitle-word subtitle-1 blur-[1px] group-hover:blur-0 transition-all duration-500">
+School
+</span>
+<span class="title-word title-2 opacity-50 group-hover:opacity-100">of</span>
+<span class="subtitle-word subtitle-3 tracking-widest group-hover:tracking-normal transition-all duration-1000">
+Christ
+</span>
+</h3>
+
+blur-[1px]: Легкое размытие, которое исчезает при наведении (group-hover:blur-0).
+
+tracking-widest: Межбуквенное расстояние, которое сужается при наведении, создавая эффект концентрации.
+
+3. Эффект «Камня Истины» (Neon Glow)
+
+Если у тебя темная тема, можно добавить неоновое свечение.
+
+<span class="subtitle-word subtitle-1 drop-shadow-[0_0_10px_rgba(56,189,248,0.8)] text-sky-400">
+School
+</span>
+
+drop-shadow-[0_0_10px_...]: Создает мягкий ореол вокруг букв.
+
+4. Динамические анимации (Config)
+
+Ты можешь добавить свои анимации в tailwind.config.js. Например, «плавание» вверх-вниз (float):
+
+// tailwind.config.js
+module.exports = {
+    theme: {
+        extend: {
+            animation: {
+                'float': 'float 3s ease-in-out infinite',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                }
+            }
+        }
+    }
+}
+
+И затем применить: <span class="animate-float">School</span>.
+
+Класс,Эффект,Смысл для Миссии
+hover:scale-110,Увеличение при наведении,«Приближение к Истине»
+tracking-tighter,Плотные буквы,«Единство в Слове»
+uppercase,Все заглавные,«Твердость веры»
+drop-shadow-2xl,Глубокая тень,«Весомость учения»
+underline decoration-sky-500,Подчеркивание цветом неба,«Основание на Небесах»
+
+
+</head>
+<body class="dark">
+<app-root></app-root>
+</body>
+</html>
+

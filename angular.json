@@ -22,7 +22,17 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.md",
+                "input": "src/content/school",
+                "output": "./assets/school/"
+              },
+              {
+                "glob": "**/*",
+                "input": "laboratory/",
+                "output": "./lab/"
+              }
             ],
             "styles": [
               "src/styles.css"

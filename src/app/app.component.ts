@@ -28,15 +28,22 @@ import { FooterComponent } from './footer/footer.component';
     />
   } @else {
     <header class="welcome-section">
-    <h1 class="main-title">
-    <span class="title-word title-1">Journal</span>
-    <span class="title-word title-2">Web</span>
-    <span class="title-word title-3">Arystan</span>
-    </h1>
+    <h3 class="main-title font-bold text-5xl text-center">
+    <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-300 animate-pulse">
+    Journal
+    </span>
+    <span class="text-slate-400 italic mx-2">Web</span>
+    <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-500 drop-shadow-lg">
+    Arystan
+    </span>
+    </h3>
     <p class="subtitle">
     <span class="subtitle-word subtitle-1">Web</span>
     <span class="subtitle-word subtitle-2">Development</span>
     <span class="subtitle-word subtitle-3">Studio</span>
+    <span class="subtitle-word subtitle-1">&</span>
+    <span class="subtitle-word subtitle-2">Shekinah</span>
+    <span class="subtitle-word subtitle-3">Mission</span>
     </p>
     </header>
 
@@ -79,12 +86,15 @@ import { FooterComponent } from './footer/footer.component';
     </div>
     </section>
   }
+
+  <span class="subtitle-word subtitle-1 drop-shadow-[0_0_10px_rgba(56,189,248,0.8)] text-sky-400">AI & Web Studio</span>
+
   <header class="welcome-section">
-  <h1 class="main-title">
+  <h2 class="main-title">
   <span class="title-word title-1">Shekinah</span>
   <span class="title-word title-2">Mission</span>
   <span class="title-word title-3">Cloud</span>
-  </h1>
+  </h2>
   <p class="subtitle">
   <span class="subtitle-word subtitle-1">Мы используем Angular, Gemini и Git</span>
   <span class="subtitle-word subtitle-2">не ради них самих,</span>
@@ -92,11 +102,15 @@ import { FooterComponent } from './footer/footer.component';
   </p>
   </header>
   <header class="welcome-section">
-  <h1 class="main-title">
-  <span class="subtitle-word subtitle-1">Mission</span>
-  <span class="subtitle-word subtitle-2">Shekinah</span>
-  <span class="subtitle-word subtitle-3">Kazakstan</span>
-  </h1>
+  <h3 class="main-title font-bold text-5xl text-center">
+  <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-300 animate-pulse">
+  School
+  </span>
+  <span class="text-slate-400 italic mx-2">of</span>
+  <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-500 drop-shadow-lg">
+  Christ
+  </span>
+  </h3>
   <p class="subtitle">
   <span class="subtitle-word subtitle-1">В эпоху ИИ важно не потерять самопознание.</span>
   <span class="subtitle-word subtitle-2">Технология — лишь служанка, а господин — дух,</span>
