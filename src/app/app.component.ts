@@ -41,12 +41,6 @@ import { FooterComponent } from './footer/footer.component';
     </header>
 
     <section class="api-section">
-    <h2 class="section-title">Gemini API Key</h2>
-    <p class="section-desc">Введите ваш API ключ для доступа к модели Gemini 3 Flash</p>
-    <p class="api-help">
-    Ключ можно получить в
-    <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" rel="noopener">Google AI Studio</a>
-    </p>
     <div class="input-group">
     <input
     type="password"
