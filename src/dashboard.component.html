@@ -1,0 +1,14 @@
+<div class="journal-cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+  @for (journal of journals; track journal.id) {
+    <div class="journal-card" (click)="selectJournal(journal.id)">
+      <div class="card-icon">{{ journal.icon }}</div>
+      <h3 class="card-title">{{ journal.title }}</h3>
+      <p class="card-desc">{{ journal.description }}</p>
+      <span [class]="'mt-4 inline-block px-3 py-1 rounded-full text-xs font-bold ' +
+        (journal.category === 'spiritual' ? 'bg-amber-100 text-amber-700' :
+         journal.category === 'technical' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700')">
+        {{ journal.category.toUpperCase() }}
+      </span>
+    </div>
+  }
+</div>
